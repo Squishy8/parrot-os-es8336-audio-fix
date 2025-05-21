@@ -56,39 +56,43 @@ sudo apt install firmware-sof-signed firmware-linux firmware-linux-nonfree alsa-
 
 ### 2.5 Disable legacy HDA override (critical for Alder Lake)
 
-Most Linux distributions — including Parrot OS — may attempt to force the use of the legacy `snd-hda-intel` driver by applying kernel parameters in modprobe configs.
-
-However, **Intel Alder Lake platforms do not use traditional HDA drivers**. Instead, they rely on **Sound Open Firmware (SOF)** to properly detect and initialize modern codecs like **ES8336**.
-
-If this override is left in place, it will block the correct SOF driver from loading, and your analog output (headphones) will never appear.
-
-#### 🔧 Fix it:
-
-Open this file:
-
+If you've ever attempted to fix your audio manually in the past *(I have, and that’s why I’m including this section)*, you may have created a custom modprobe configuration at:
 ```bash
-sudo nano /etc/modprobe.d/alsa-base.conf
+/etc/modprobe.d/alsa-base.conf
 ```
-
-Then **comment out or remove** lines like:
+This file is **not present by default** in Parrot OS or other modern Debian-based systems. However, if it exists, and contains options like:
 ```bash
 options snd-hda-intel model=generic
 options snd-intel-dspcfg dsp_driver=1
 ```
+...then your system is being forced to load the **legacy HDA driver** (`snd-hda-intel`), which is not compatible with **Intel Alder Lake + ES8336**.
 
+This will prevent the correct driver from loading and cause analog outputs (like headphone jacks) to remain hidden.
+
+#### 🧼 Fix it:
+
+Check if the file exists:
+```bash
+sudo nano /etc/modprobe.d/alsa-base.conf
+```
+
+If it contains those lines, comment them out or delete them:
+```bash
+# options snd-hda-intel model=generic
+# options snd-intel-dspcfg dsp_driver=1
+```
+ 
 Then save and close:
-
 ```plaintext
 Ctrl + O, Enter, Ctrl + X
 ```
 
----
-
-This allows the kernel to load the appropriate driver for Alder Lake:
+This allows the system to fall back to the correct SOF driver:
 ```bash
 snd_sof_pci_intel_tgl
 ```
-And enables proper detection of the audio device:
+
+Which should expose the device:
 ```bash
 card 0: sofessx8336 [sof-essx8336], device 0: ES8336
 ```
