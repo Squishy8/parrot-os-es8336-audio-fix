@@ -54,6 +54,45 @@ sudo apt install firmware-sof-signed firmware-linux firmware-linux-nonfree alsa-
 
 ---
 
+### 2.5 Disable legacy HDA override (critical for Alder Lake)
+
+Most Linux distributions — including Parrot OS — may attempt to force the use of the legacy `snd-hda-intel` driver by applying kernel parameters in modprobe configs.
+
+However, **Intel Alder Lake platforms do not use traditional HDA drivers**. Instead, they rely on **Sound Open Firmware (SOF)** to properly detect and initialize modern codecs like **ES8336**.
+
+If this override is left in place, it will block the correct SOF driver from loading, and your analog output (headphones) will never appear.
+
+#### 🔧 Fix it:
+
+Open this file:
+
+```bash
+sudo nano /etc/modprobe.d/alsa-base.conf
+```
+
+Then **comment out or remove** lines like:
+```bash
+options snd-hda-intel model=generic
+options snd-intel-dspcfg dsp_driver=1
+```
+
+Then save and close:
+
+```plaintext
+Ctrl + O, Enter, Ctrl + X
+```
+
+---
+
+This allows the kernel to load the appropriate driver for Alder Lake:
+```bash
+snd_sof_pci_intel_tgl
+```
+And enables proper detection of the audio device:
+```bash
+card 0: sofessx8336 [sof-essx8336], device 0: ES8336
+```
+
 ### 3. Reboot the system
 
 ```bash
