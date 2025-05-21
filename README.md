@@ -31,6 +31,24 @@ Expected output:
 
 ---
 
+### ⚠️ Important: This guide uses ALSA directly (not PipeWire or PulseAudio)
+
+This guide operates at the **ALSA (Advanced Linux Sound Architecture)** level to verify that the audio driver and codec are working correctly.
+
+Most modern Linux systems use **PipeWire** or **PulseAudio** as their default audio servers. These layers sit on top of ALSA and require the hardware to be correctly detected and configured at the ALSA level first.
+
+In systems with **Intel Alder Lake + ES8336**, the SOF driver (`snd_sof_pci_intel_tgl`) may not expose the audio outputs in a way that PipeWire/PulseAudio can use **until ALSA is working correctly**.
+
+That’s why this guide:
+- Uses `aplay` and `speaker-test` to test audio directly
+- Uses `alsamixer` to adjust volume and unmute channels
+
+🧪 Once audio works via ALSA, you can then configure PipeWire or PulseAudio to use the same SOF output device if needed.
+
+This guide focuses on getting **headphone output working at the kernel/ALSA layer first**, which is the foundation for all higher-level audio systems.
+
+---
+
 ## 🛠️ Step-by-Step Solution
 
 ### 1. Check that SOF firmware is available
