@@ -61,6 +61,35 @@ You should see files like `sof-adl.ri`, `sof-essx8336`, etc.
 
 ---
 
+### 🔄 If firmware files are missing
+
+If the `sof-*.ri` files are not present in `/lib/firmware/intel/sof/`, you can download them manually from the official SOF project:
+👉 https://github.com/thesofproject/sof-bin
+
+To install them manually:
+```bash
+cd ~
+git clone https://github.com/thesofproject/sof-bin.git
+cd sof-bin
+```
+
+Then copy the firmware to your system:
+```bash
+sudo cp -r v2.2.5/* /lib/firmware/intel/
+sudo update-initramfs -u
+```
+
+> You can replace `v2.2.5` with the latest release folder inside the repo.
+
+Make sure the target structure looks like this:
+```
+/lib/firmware/intel/sof/sof-essx8336.ri
+/lib/firmware/intel/sof/sof-adl.ri
+...
+```
+
+---
+
 ### 2. Install necessary firmware and tools
 
 ```bash
