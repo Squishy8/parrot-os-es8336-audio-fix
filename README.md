@@ -84,7 +84,7 @@ If it contains those lines, comment them out or delete them:
  
 Then save and close:
 ```plaintext
-Ctrl + O, Enter, Ctrl + X
+Ctrl + X, Y, ENTER
 ```
 
 This allows the system to fall back to the correct SOF driver:
